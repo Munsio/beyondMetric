@@ -1,74 +1,63 @@
+const characterSheetLoadedEvent = new Event('bmCharacterSheetLoaded')
+const premiumTarget = '#character-tools-target'
+const normalTarget = '#character-sheet-target'
+const sufixTarget = ' > .ct-character-sheet .ct-quick-info__ability'
+const premiumPrefix = 'ddbc'
+const normalPrefix = 'ct'
+const defaultPrefixes = [premiumPrefix, normalPrefix]
+
+// Wait for character sheet to load then trigger bmCharacterSheetLoaded event
 const waitingForCharacterSheet = function () {
-    const csLoadedEvent = new Event('biCsLoaded')
     const loadingCharacterSheet = setInterval(function () {
-        const CharacterSheetLoaded = document.querySelectorAll('#character-tools-target > .ct-character-sheet .ct-quick-info__ability, #character-sheet-target > .ct-character-sheet .ct-quick-info__ability').length >= 1 ? true : false
-        if (CharacterSheetLoaded) {
-            document.dispatchEvent(csLoadedEvent)
+        const queryString = premiumTarget + sufixTarget + ',' + normalTarget + sufixTarget
+        const characterSheetLoaded = document.querySelectorAll(queryString).length >= 1
+        if (characterSheetLoaded) {
+            document.dispatchEvent(characterSheetLoadedEvent)
             clearInterval(loadingCharacterSheet)
         }
     }, 100);
-
-    document.addEventListener('biCsLoaded', function() {
-        afterLoad()
+    document.addEventListener('bmCharacterSheetLoaded', function() {
+        characterSheetLoaded()
     })
 }
+waitingForCharacterSheet()
 
-const afterLoad = function() {
-    replaceWithNonRetardedUnits()
+// This function is called after the character sheet is loaded
+const characterSheetLoaded = function() {
+    replaceWithMetricUnits()
 }
 
-const replaceWithNonRetardedUnits = function() {
+const replaceWithMetricUnits = function() {
     setInterval(function() {
-        distanceNumber()
-        rangeNumber()
+        convertDistanceNumbers()
+        convertRangeNumbers()
     }, 500)
 }
 
-const distanceNumber = function () {
-    let distances = document.querySelectorAll('.ddbc-distance-number, .ct-distance-number')
-    distances.forEach(function (el) {
-        const distanceNumber = el.querySelector('.ddbc-distance-number__number, .ct-distance-number__number')
-        const distanceLabel = el.querySelector('.ddbc-distance-number__label, .ct-distance-number__label')
-        if (distanceNumber && distanceNumber.innerHTML && distanceLabel && distanceLabel.innerHTML) {
-            if (!el.classList.contains('bi-modified')) {
-                replaceRetardedUnit(distanceNumber, el)
-                replaceRetardedLabel(distanceLabel, el)
-                markModified(el)
-            }
-        }
+// this case covers simple distances: distance-number
+const convertDistanceNumbers = function() {
+    const dnDivClass = 'distance-number'
+    const dnNumberClass = '__number'
+    const dnLabelClass = '__label'
+
+    let distances = document.querySelectorAll(createMixQuery(dnDivClass, ...defaultPrefixes))
+    distances.forEach(function(el) {
+        const dnNumberSpan = el.querySelector(createMixQuery(dnDivClass + dnNumberClass, ...defaultPrefixes))
+        const dnLabelSpan = el.querySelector(createMixQuery(dnDivClass + dnLabelClass, ...defaultPrefixes))
+        replaceSimpleDistancWithMetric(el, dnNumberSpan, dnLabelSpan)
     })
 }
 
-const rangeNumber = function() {
-    let distances = document.querySelectorAll('.ddbc-combat-attack__range-value, .ct-combat-attack__range-value')
+// this case covers range weapons range attacks: combat-attack__range-value
+const convertRangeNumbers = function() {
+    const rnDivClass = 'combat-attack__range-value'
+    const rnCloseClass = '-close'
+    const rnLongClass = '-long'
+
+    let distances = document.querySelectorAll(createMixQuery(rnDivClass, ...defaultPrefixes))
     distances.forEach(function (el) {
-        const rangeValueClose = el.querySelector('.ddbc-combat-attack__range-value-close, .ct-combat-attack__range-value-close')
-        const rangeValueLong = el.querySelector('.ddbc-combat-attack__range-value-long, .ct-combat-attack__range-value-long')
-        if (rangeValueClose && rangeValueClose.innerHTML && rangeValueLong && rangeValueLong.innerHTML) {
-            if (!el.classList.contains('bi-modified')) {
-                replaceRetardedUnit(rangeValueClose, el)
-                regexRetardedUnitOut(rangeValueLong, el)
-                markModified(el)
-            }
-        }
+        const rnClose = el.querySelector(createMixQuery(rnDivClass + rnCloseClass, ...defaultPrefixes))
+        const rnLong = el.querySelector(createMixQuery(rnDivClass + rnLongClass, ...defaultPrefixes))
+        replaceRangeDistanceWithMetric(el, rnClose, rnLong)
     })
 }
-
-const replaceRetardedUnit = function (distanceHTML) {
-    distanceHTML.innerHTML = (distanceHTML.innerHTML / 5) + ((distanceHTML.innerHTML / 5) / 2)
-}
-
-const replaceRetardedLabel = function (labelHTML) {
-    labelHTML.innerHTML = 'm.'
-}
-
-const regexRetardedUnitOut = function (distanceHTML) {
-    const newDistance = distanceHTML.innerHTML.slice(1, distanceHTML.innerHTML.length - 1)
-    distanceHTML.innerHTML = (newDistance / 5) + ((newDistance / 5) / 2)
-}
-
-const markModified = function (htmlElement) {
-    htmlElement.classList.add('bi-modified')
-}
-
-waitingForCharacterSheet()
