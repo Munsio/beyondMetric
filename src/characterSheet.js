@@ -32,8 +32,8 @@ const replaceWithMetricUnits = function() {
     setInterval(function() {
         convertDistanceNumbers()
         convertRangeNumbers()
-        convertDistanceInPlainText()
         convertDistanceInSnippets()
+        convertDescriptions()
         convertWeightNumber()
     }, interval)
 }

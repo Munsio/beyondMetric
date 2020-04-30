@@ -53,9 +53,13 @@ const changeLabelToMetric = function(label) {
     label.innerHTML = feetStringEquivalent(label.innerHTML)
 }
 
+const roundUpToTwoDecibles = function(number) {
+    return Math.round((number + Number.EPSILON) * 100) / 100
+}
+
 const calculateMetricDistance = function(distance) {
     const d5 = distance / 5
-    return d5 + d5 / 2
+    return roundUpToTwoDecibles(d5 + d5 / 2)
 }
 
 const replaceLongRangeDistance = function(distance) {
@@ -74,7 +78,7 @@ const calculateMetricDistanceInText = function(text) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
     })   
     text = text.replace(/([0-9]+) cubic (foot)/g, function(match, number, label) {
-        return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent(label)
+        return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent('feet') //TODO make it more generic
     })
 
     return text
