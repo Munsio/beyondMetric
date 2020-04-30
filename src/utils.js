@@ -11,9 +11,9 @@ const createMixQuery = function(cls, premium, normal) {
     return returnString
 }
 
-const checkIfNotEmpty = function(el, isDistance) {
+const checkIfNotEmpty = function(el, isValue) {
     if (el && el.innerHTML) {
-        if (isDistance) {
+        if (isValue) {
             return el.innerHTML !== '--'
         }
         return true
@@ -43,13 +43,13 @@ const feetStringEquivalent = function(ftString) {
             mString = 'meter'
             break
         default:
-            break;
+            break
     }
 
     return mString
 }
 
-const changeLabel = function(label) {
+const changeLabelToMetric = function(label) {
     label.innerHTML = feetStringEquivalent(label.innerHTML)
 }
 
@@ -72,7 +72,38 @@ const calculateMetricDistanceInText = function(text) {
     })   
     text = text.replace(/([0-9]+) (ft.)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
+    })   
+    text = text.replace(/([0-9]+) cubic (foot)/g, function(match, number, label) {
+        return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent(label)
     })
 
     return text
+}
+
+const poundsStringEquivalent = function(lbString) {
+    let kgString = 'kilogram'
+
+    switch (lbString) {
+        case 'lb.':
+            kgString = 'kg.'
+            break;
+        case 'pounds':
+            kgString = 'kilograms'
+            break
+        case 'pound':
+            kgString = 'kilogram'
+            break
+        default:
+            break
+    }
+
+    return kgString
+}
+
+const calculateKiloWeight = function(weight) {
+    return weight / 2
+}
+
+const replaceLabelWithKilo = function(label) {
+    label.innerHTML = poundsStringEquivalent(label.innerHTML)
 }

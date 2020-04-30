@@ -34,6 +34,7 @@ const replaceWithMetricUnits = function() {
         convertRangeNumbers()
         convertDistanceInPlainText()
         convertDistanceInSnippets()
+        convertWeightNumber()
     }, interval)
 }
 
@@ -57,7 +58,7 @@ const replaceSimpleDistancWithMetric = function(el, dnNumberSpan, dnLabelSpan) {
             dnNumberSpan.innerHTML = calculateMetricDistance(dnNumberSpan.innerHTML)
         }
         if (checkIfNotEmpty(dnLabelSpan)) {
-            changeLabel(dnLabelSpan)
+            changeLabelToMetric(dnLabelSpan)
         }
         markModified(el)
     }
@@ -89,7 +90,7 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
     }
 }
 
-// this case covers plane text with distances html-content 
+// this case covers plane text with distances spell-detail__description
 const convertDistanceInPlainText = function() {
     const ptDivClass = 'spell-detail__description'
 
@@ -117,6 +118,32 @@ const replaceDistanceInTextWithMetric = function(el) {
                 p.innerHTML = calculateMetricDistanceInText(p.innerHTML)
             }
         })
+        markModified(el)
+    }
+}
+
+// this case covers the conversion from lbs to kg
+const convertWeightNumber = function() {
+    const wnDivClass = 'weight-number'
+    const wnNumberClass = '__number'
+    const wnLabelClass = '__label'
+
+    let weights = queryAll(createMixQuery(wnDivClass, ...defaultPrefixes))
+    weights.forEach(function (el) {
+        const wnNumberSpan = el.querySelector(createMixQuery(wnDivClass + wnNumberClass, ...defaultPrefixes))
+        const wnLabelSpan = el.querySelector(createMixQuery(wnDivClass + wnLabelClass, ...defaultPrefixes))
+        replaceWeightWithKilo(el, wnNumberSpan, wnLabelSpan)
+    }) 
+}
+
+const replaceWeightWithKilo = function(el, wnNumberSpan, wnLabelSpan) {
+    if (!checkIfMarked(el, convertedClass)) {
+        if (checkIfNotEmpty(wnNumberSpan, true)) {
+            wnNumberSpan.innerHTML = calculateKiloWeight(wnNumberSpan.innerHTML)
+        }
+        if (checkIfNotEmpty(wnLabelSpan)) {
+            replaceLabelWithKilo(wnLabelSpan)
+        }
         markModified(el)
     }
 }
