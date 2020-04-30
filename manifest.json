@@ -1,0 +1,12 @@
+{
+    "name": "beyondImperial",
+    "version": "1.0",
+    "manifest_version": 2,
+    "content_scripts": [
+        {
+            "run_at": "document_end",
+            "matches": ["*://www.dndbeyond.com/*characters/*"],
+            "js": ["src/characterSheet.js"]
+        }
+    ]
+}
