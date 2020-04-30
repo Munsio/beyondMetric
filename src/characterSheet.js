@@ -90,12 +90,18 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
     }
 }
 
-// this case covers plane text with distances spell-detail__description
-const convertDistanceInPlainText = function() {
-    const ptDivClass = 'spell-detail__description'
+// this case covers all descriptions for premium users
+// and for normal users:
+// - item descriptions item-detail__description
+// - action details action-detail__description
+// - spell details spell-detail__description
+const convertDescriptions = function() {
+    const premiumClass = '.ddbc-html-content'
+    const normalClasses = '.ct-item-detail__description, .ct-action-detail__description, .ct-spell-detail__description'
+    const classes = premiumClass + ', ' + normalClasses
 
-    let pContainers = queryAll(createMixQuery(ptDivClass, ...defaultPrefixes))
-    pContainers.forEach(function(el) {
+    let containers = queryAll(classes)
+    containers.forEach(function(el) {
         replaceDistanceInTextWithMetric(el)
     })
 }
