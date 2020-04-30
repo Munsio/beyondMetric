@@ -1,34 +1,14 @@
 const convertedClass = 'bm-converted-to-metric'
 
+const queryAll = function(query, target=document) {
+    return target.querySelectorAll(query)
+}
+
 const createMixQuery = function(cls, premium, normal) {
     const premiumString = '.' + premium + '-' + cls
     const normalString = '.' + normal + '-' + cls
     const returnString = premiumString + ', ' + normalString
     return returnString
-}
-
-const replaceSimpleDistancWithMetric = function(el, dnNumberSpan, dnLabelSpan) {
-    if (!checkIfMarked(el, convertedClass)) {
-        if (checkIfNotEmpty(dnNumberSpan, true)) {
-            dnNumberSpan.innerHTML = calculateMetricDistance(dnNumberSpan.innerHTML)
-        }
-        if (checkIfNotEmpty(dnLabelSpan)) {
-            changeLabel(dnLabelSpan)
-        }
-        markModified(el)
-    }
-}
-
-const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
-    if (!checkIfMarked(el, convertedClass)) {
-        if (checkIfNotEmpty(rnClose, true)) {
-            rnClose.innerHTML = calculateMetricDistance(rnClose.innerHTML)
-        }
-        if (checkIfNotEmpty(rnLong, true)) {
-            rnLong.innerHTML = replaceLongRangeDistance(rnLong.innerHTML)
-        }
-        markModified(el)
-    }
 }
 
 const checkIfNotEmpty = function(el, isDistance) {
@@ -49,8 +29,28 @@ const checkIfMarked = function(htmlElement, classToCheck) {
     return htmlElement.classList.contains(classToCheck)
 }
 
+const feetStringEquivalent = function(ftString) {
+    let mString = 'meter'
+
+    switch (ftString) {
+        case 'ft.':
+            mString = 'm.'
+            break;
+        case 'feet':
+            mString = 'meters'
+            break
+        case 'foot':
+            mString = 'meters'
+            break
+        default:
+            break;
+    }
+
+    return mString
+}
+
 const changeLabel = function(label) {
-    label.innerHTML = 'm.'
+    label.innerHTML = feetStringEquivalent(label.innerHTML)
 }
 
 const calculateMetricDistance = function(distance) {
@@ -61,4 +61,18 @@ const calculateMetricDistance = function(distance) {
 const replaceLongRangeDistance = function(distance) {
     const newDistance = distance.slice(1, distance.length - 1)
     return calculateMetricDistance(newDistance)
+}
+
+const calculateMetricDistanceInText = function(text) {
+    text = text.replace(/([0-9]+) (feet)/g, function(match, number, label) {
+        return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
+    })    
+    text = text.replace(/([0-9]+)-(foot)/g, function(match, number, label) {
+        return calculateMetricDistance(number) + '-' + feetStringEquivalent(label)
+    })   
+    text = text.replace(/([0-9]+) (ft.)/g, function(match, number, label) {
+        return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
+    })
+
+    return text
 }
