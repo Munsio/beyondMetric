@@ -40,7 +40,7 @@ const feetStringEquivalent = function(ftString) {
             mString = 'meters'
             break
         case 'foot':
-            mString = 'meters'
+            mString = 'meter'
             break
         default:
             break;

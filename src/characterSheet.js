@@ -91,7 +91,7 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
 
 // this case covers plane text with distances html-content 
 const convertDistanceInPlainText = function() {
-    const ptDivClass = 'html-content'
+    const ptDivClass = 'spell-detail__description'
 
     let pContainers = queryAll(createMixQuery(ptDivClass, ...defaultPrefixes))
     pContainers.forEach(function(el) {
