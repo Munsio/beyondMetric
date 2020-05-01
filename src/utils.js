@@ -4,6 +4,18 @@ const queryAll = function(query, target=document) {
     return target.querySelectorAll(query)
 }
 
+const textNodesUnder = function(el) {
+    let n
+    let a = []
+    let walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
+
+    while (n = walk.nextNode()) {
+        a.push(n)
+    } 
+
+    return a;
+}
+
 const createMixQuery = function(cls, premium, normal) {
     const premiumString = '.' + premium + '-' + cls
     const normalString = '.' + normal + '-' + cls
@@ -19,6 +31,10 @@ const checkIfNotEmpty = function(el, isValue) {
         return true
     }
     return false
+}
+
+const checkIfTextNodeNotEmpty = function(textNode) {
+    return textNode && textNode.textContent && textNode.textContent.length > 0
 }
 
 const markModified = function(htmlElement) {

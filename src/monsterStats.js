@@ -11,7 +11,7 @@ const waitingForCharacterSheet = function () {
             document.dispatchEvent(monsterStatsLoadedEvent)
             clearInterval(loadingCharacterSheet)
         }
-    }, 100);
+    }, interval);
     document.addEventListener('bmMonsterStatsLoaded', function () {
         characterSheetLoaded()
     })
@@ -33,12 +33,16 @@ const replaceUnits = function () {
 const convertUnitsInMonsterText = function() {
     const moreInfoClass = '.more-info-content'
     const statBlock = queryAll(monsterStatsContainerClass + ',' + moreInfoClass)
+
     statBlock.forEach(function(el) {
-        if (checkIfNotEmpty(el)) {
-            if (!checkIfMarked(el, convertedClass)) {
-                el.innerHTML = calculateWeightInText(calculateMetricDistanceInText(el.innerHTML))
-                markModified(el)
-            }
+        if (checkIfNotEmpty(el) && !checkIfMarked(el, convertedClass)) {
+            const textNodes = textNodesUnder(el)
+            textNodes.forEach(function (tn) {
+                if (checkIfTextNodeNotEmpty(tn)){
+                    tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
+                }
+            })
+            markModified(el)
         }
     })
 }

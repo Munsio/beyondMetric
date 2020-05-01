@@ -16,7 +16,7 @@ const waitingForCharacterSheet = function () {
             document.dispatchEvent(characterSheetLoadedEvent)
             clearInterval(loadingCharacterSheet)
         }
-    }, 100);
+    }, interval);
     document.addEventListener('bmCharacterSheetLoaded', function() {
         characterSheetLoaded()
     })
@@ -121,7 +121,12 @@ const replaceUnitsInTextWith = function(el) {
         let paragraphs = queryAll('p', el)
         paragraphs.forEach(function(p) {
             if (checkIfNotEmpty(p)){
-                p.innerHTML = calculateWeightInText(calculateMetricDistanceInText(p.innerHTML))
+                const textNodes = textNodesUnder(p)
+                textNodes.forEach(function (tn) {
+                    if (checkIfTextNodeNotEmpty(tn)) {
+                        tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
+                    }
+                })
             }
         })
         markModified(el)
