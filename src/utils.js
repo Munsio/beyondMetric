@@ -111,3 +111,17 @@ const calculateKiloWeight = function(weight) {
 const replaceLabelWithKilo = function(label) {
     label.innerHTML = poundsStringEquivalent(label.innerHTML)
 }
+
+const calculateWeightInText = function(text) {
+    text = text.replace(/([0-9]+) (pounds)/g, function (match, number, label) {
+        return calculateKiloWeight(number) + ' ' + poundsStringEquivalent(label)
+    })    
+    text = text.replace(/([0-9]+) (pound)/g, function (match, number, label) {
+        return calculateKiloWeight(number) + ' ' + poundsStringEquivalent(label)
+    })    
+    text = text.replace(/([0-9]+) (lb.)/g, function (match, number, label) {
+        return calculateKiloWeight(number) + ' ' + poundsStringEquivalent(label)
+    })
+    
+    return text
+}

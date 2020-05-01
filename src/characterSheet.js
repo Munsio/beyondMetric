@@ -25,14 +25,14 @@ waitingForCharacterSheet()
 
 // This function is called after the character sheet is loaded
 const characterSheetLoaded = function() {
-    replaceWithMetricUnits()
+    replaceUnits()
 }
 
-const replaceWithMetricUnits = function() {
+const replaceUnits = function() {
     setInterval(function() {
         convertDistanceNumbers()
         convertRangeNumbers()
-        convertDistanceInSnippets()
+        convertUnitsInSnippets()
         convertDescriptions()
         convertWeightNumber()
     }, interval)
@@ -97,31 +97,31 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
 // - spell details spell-detail__description
 const convertDescriptions = function() {
     const premiumClass = '.ddbc-html-content'
-    const normalClasses = '.ct-item-detail__description, .ct-action-detail__description, .ct-spell-detail__description'
+    const normalClasses = '.ct-item-detail__description, .ct-action-detail__description, .ct-spell-detail__description, .ct-snippet__content'
     const classes = premiumClass + ', ' + normalClasses
 
     let containers = queryAll(classes)
     containers.forEach(function(el) {
-        replaceDistanceInTextWithMetric(el)
+        replaceUnitsInTextWith(el)
     })
 }
 
 // this case covers snipets jsx-parser
-const convertDistanceInSnippets = function() {
+const convertUnitsInSnippets = function() {
     const sDivClass = '.jsx-parser'
 
     let pContainers = queryAll(sDivClass)
     pContainers.forEach(function(el) {
-        replaceDistanceInTextWithMetric(el)
+        replaceUnitsInTextWith(el)
     })
 }
 
-const replaceDistanceInTextWithMetric = function(el) {
+const replaceUnitsInTextWith = function(el) {
     if (!checkIfMarked(el, convertedClass)) {
         let paragraphs = queryAll('p', el)
         paragraphs.forEach(function(p) {
             if (checkIfNotEmpty(p)){
-                p.innerHTML = calculateMetricDistanceInText(p.innerHTML)
+                p.innerHTML = calculateWeightInText(calculateMetricDistanceInText(p.innerHTML))
             }
         })
         markModified(el)
