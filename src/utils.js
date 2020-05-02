@@ -58,6 +58,12 @@ const feetStringEquivalent = function(ftString) {
         case 'foot':
             mString = 'meter'
             break
+        case 'mile':
+            mString = 'kilometres'
+            break
+        case 'miles':
+            mString = 'kilometres'
+            break
         default:
             break
     }
@@ -73,9 +79,19 @@ const roundUpToTwoDecibles = function(number) {
     return Math.round((number + Number.EPSILON) * 100) / 100
 }
 
+const cleanCommas = function(text) {
+    return text.replace(',', '')
+}
+
 const calculateMetricDistance = function(distance) {
+    distance = cleanCommas(distance)
     const d5 = distance / 5
     return roundUpToTwoDecibles(d5 + d5 / 2)
+}
+
+const calculateMileToKm = function(distance) {
+    distance = cleanCommas(distance)
+    return roundUpToTwoDecibles(distance * 1.6)
 }
 
 const replaceLongRangeDistance = function(distance) {
@@ -84,6 +100,9 @@ const replaceLongRangeDistance = function(distance) {
 }
 
 const calculateMetricDistanceInText = function(text) {
+    text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function(match, number, notUsed, label) {
+        return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
+    })       
     text = text.replace(/([0-9]+) (feet)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
     })    
@@ -96,6 +115,15 @@ const calculateMetricDistanceInText = function(text) {
     text = text.replace(/([0-9]+) cubic (foot)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent('feet') //TODO make it more generic
     })
+    text = text.replace(/([0-9]+) (mile)/g, function (match, number, label) {
+        return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
+    })  
+    text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, function (match, number, notUsed, label) {
+        return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
+    })    
+    text = text.replace(/([0-9]+) (miles)/g, function (match, number, label) {
+        return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
+    })   
 
     return text
 }
