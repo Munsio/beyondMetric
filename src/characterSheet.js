@@ -1,8 +1,11 @@
-const characterSheetLoadedEvent = new Event('bmCharacterSheetLoaded')
 const interval = 500
+const observerConfig = { attributes: true, childList: true, subtree: true }
+const observerTarget = document
+
 const premiumTarget = '#character-tools-target'
 const normalTarget = '#character-sheet-target'
 const sufixTarget = ' > .ct-character-sheet .ct-quick-info__ability'
+const compactTarget = '> .ct-character-sheet .ct-skills'
 const premiumPrefix = 'ddbc'
 const normalPrefix = 'ct'
 const defaultPrefixes = [premiumPrefix, normalPrefix]
@@ -10,32 +13,33 @@ const defaultPrefixes = [premiumPrefix, normalPrefix]
 // Wait for character sheet to load then trigger bmCharacterSheetLoaded event
 const waitingForCharacterSheet = function () {
     const loadingCharacterSheet = setInterval(function () {
-        const queryString = premiumTarget + sufixTarget + ',' + normalTarget + sufixTarget
+        const queryString = premiumTarget + sufixTarget + ',' + 
+            normalTarget  + sufixTarget   + ',' + 
+            premiumTarget + compactTarget + ',' + 
+            normalTarget  + compactTarget
+
         const characterSheetLoaded = queryAll(queryString).length >= 1
         if (characterSheetLoaded) {
-            document.dispatchEvent(characterSheetLoadedEvent)
+            characterSheetAfterLoad()
             clearInterval(loadingCharacterSheet)
         }
     }, interval);
-    document.addEventListener('bmCharacterSheetLoaded', function() {
-        characterSheetLoaded()
-    })
 }
 waitingForCharacterSheet()
 
 // This function is called after the character sheet is loaded
-const characterSheetLoaded = function() {
+const characterSheetAfterLoad = function() {
     replaceUnits()
+    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
 }
 
-const replaceUnits = function() {
-    setInterval(function() {
-        convertDistanceNumbers()
-        convertRangeNumbers()
-        convertUnitsInSnippets()
-        convertDescriptions()
-        convertWeightNumber()
-    }, interval)
+const replaceUnits = function(mutationsList, observer) {
+    convertDistanceNumbers()
+    convertRangeNumbers()
+    convertUnitsInSnippets()
+    convertDescriptions()
+    covertSenses()
+    convertWeightNumber()
 }
 
 // this case covers simple distances: distance-number
@@ -95,9 +99,15 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
 // - item descriptions item-detail__description
 // - action details action-detail__description
 // - spell details spell-detail__description
+// - features snippets snippet__content
 const convertDescriptions = function() {
     const premiumClass = '.ddbc-html-content'
-    const normalClasses = '.ct-item-detail__description, .ct-action-detail__description, .ct-spell-detail__description, .ct-snippet__content'
+    const normalClasses = 
+        '.ct-item-detail__description, '   + 
+        '.ct-action-detail__description, ' + 
+        '.ct-spell-detail__description, '  +
+        '.ct-snippet__content'
+
     const classes = premiumClass + ', ' + normalClasses
 
     let containers = queryAll(classes)
@@ -131,6 +141,15 @@ const replaceUnitsInTextWith = function(el) {
         })
         markModified(el)
     }
+}
+
+// this case covers senses summary senses__summary
+const covertSenses = function() {
+    const sensesClass = '.ct-senses__summary'
+    let containers = queryAll(sensesClass)
+    containers.forEach(function(el) {
+        el.textContent = calculateMetricDistanceInText(el.textContent)
+    })
 }
 
 // this case covers the conversion from lbs to kg

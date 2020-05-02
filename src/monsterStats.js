@@ -1,5 +1,7 @@
-const monsterStatsLoadedEvent = new Event('bmMonsterStatsLoaded')
 const interval = 500
+const observerConfig = { attributes: true, childList: true, subtree: true }
+const observerTarget = document
+
 const monsterStatsContainerClass = '.mon-stat-block'
 
 
@@ -7,20 +9,18 @@ const monsterStatsContainerClass = '.mon-stat-block'
 const waitingForCharacterSheet = function () {
     const loadingCharacterSheet = setInterval(function () {
         const monsterStatsLoaded = queryAll(monsterStatsContainerClass).length >= 1
-        if (characterSheetLoaded) {
-            document.dispatchEvent(monsterStatsLoadedEvent)
+        if (monsterStatsLoaded) {
+            monsterStatsAfterLoad()
             clearInterval(loadingCharacterSheet)
         }
     }, interval);
-    document.addEventListener('bmMonsterStatsLoaded', function () {
-        characterSheetLoaded()
-    })
 }
 waitingForCharacterSheet()
 
 // This function is called after the monster stats were loaded
-const characterSheetLoaded = function () {
+const monsterStatsAfterLoad = function () {
     replaceUnits()
+    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
 }
 
 const replaceUnits = function () {
