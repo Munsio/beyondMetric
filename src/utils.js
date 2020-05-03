@@ -4,6 +4,10 @@ const queryAll = function(query, target=document) {
     return target.querySelectorAll(query)
 }
 
+const query = function(query, target=document) {
+    return target.querySelector(query)
+}
+
 const textNodesUnder = function(el) {
     let n
     let a = []
