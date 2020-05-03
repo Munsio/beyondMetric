@@ -6,8 +6,8 @@ const loadValuesToToggle = function() {
     chrome.storage.sync.get('bmToggleStates', function(result) {
         const toggleStates = result.bmToggleStates
         
-        csToggle.checked = toggleStates.csToggle
-        msToggle.checked = toggleStates.msToggle
+        csToggle.checked = toggleStates && toggleStates.csToggle ? true : false
+        msToggle.checked = toggleStates && toggleStates.msToggle ? true : false
     })
 }
 
