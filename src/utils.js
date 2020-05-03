@@ -102,28 +102,34 @@ const replaceLongRangeDistance = function(distance) {
 const calculateMetricDistanceInText = function(text) {
     text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function(match, number, notUsed, label) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
-    })       
+    })
     text = text.replace(/([0-9]+) (feet)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
-    })    
+    })
     text = text.replace(/([0-9]+)-(foot)/g, function(match, number, label) {
         return calculateMetricDistance(number) + '-' + feetStringEquivalent(label)
-    })   
+    })
     text = text.replace(/([0-9]+) (ft.)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' ' + feetStringEquivalent(label)
-    })   
+    })
     text = text.replace(/([0-9]+) cubic (foot)/g, function(match, number, label) {
         return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent('feet') //TODO make it more generic
     })
     text = text.replace(/([0-9]+) (mile)/g, function (match, number, label) {
         return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
-    })  
+    })
     text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, function (match, number, notUsed, label) {
         return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
-    })    
+    })
     text = text.replace(/([0-9]+) (miles)/g, function (match, number, label) {
         return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
-    })   
+    })
+    text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, function (match, words, smallRange, bigRange) {
+        return words + calculateMetricDistance(smallRange) + '/' + calculateMetricDistance(bigRange)
+    })
+    text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, function (match, words, smallRange, bigRange) {
+        return words + calculateMetricDistance(smallRange) + '/' + calculateMetricDistance(bigRange)
+    })
 
     return text
 }
