@@ -4,14 +4,14 @@ const observerTarget = document
 
 const monsterStatsContainerClass = '.mon-stat-block'
 
-chrome.storage.sync.get('bmToggleStates', function (result) {
+chrome.storage.sync.get('bmToggleStates', function(result) {
     const toggleStates = result.bmToggleStates
     if (toggleStates.msToggle) {
         waitingForMonsterStats()
     }
 })
 
-chrome.storage.onChanged.addListener(function (changes, namespace) {
+chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var key in changes) {
         var storageChange = changes[key];
         if (key === 'bmToggleStates') {
@@ -29,7 +29,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 })
 
 // Wait for monster stats to load then trigger bmCharacterSheetLoaded event
-const waitingForMonsterStats = function () {
+const waitingForMonsterStats = function() {
     const loadingCharacterSheet = setInterval(function () {
         const monsterStatsLoaded = queryAll(monsterStatsContainerClass).length >= 1
         if (monsterStatsLoaded) {
@@ -40,12 +40,12 @@ const waitingForMonsterStats = function () {
 }
 
 // This function is called after the monster stats were loaded
-const monsterStatsAfterLoad = function () {
+const monsterStatsAfterLoad = function() {
     replaceUnits()
     new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
 }
 
-const replaceUnits = function () {
+const replaceUnits = function() {
     setInterval(function () {
         convertUnitsInMonsterText()
     }, interval)

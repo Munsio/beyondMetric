@@ -10,14 +10,14 @@ const premiumPrefix = 'ddbc'
 const normalPrefix = 'ct'
 const defaultPrefixes = [premiumPrefix, normalPrefix]
 
-chrome.storage.sync.get('bmToggleStates', function (result) {
+chrome.storage.sync.get('bmToggleStates', function(result) {
     const toggleStates = result.bmToggleStates
     if (toggleStates.csToggle) {
         waitingForCharacterSheet()
     }
 })
 
-chrome.storage.onChanged.addListener(function (changes, namespace) {
+chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var key in changes) {
         var storageChange = changes[key];
         if (key === 'bmToggleStates') {
@@ -35,7 +35,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 })
 
 // Wait for character sheet to load then trigger bmCharacterSheetLoaded event
-const waitingForCharacterSheet = function () {
+const waitingForCharacterSheet = function() {
     const loadingCharacterSheet = setInterval(function () {
         const queryString = premiumTarget + sufixTarget + ',' + 
             normalTarget  + sufixTarget   + ',' + 
@@ -155,7 +155,7 @@ const replaceUnitsInTextWith = function(el) {
         paragraphs.forEach(function(p) {
             if (checkIfNotEmpty(p)){
                 const textNodes = textNodesUnder(p)
-                textNodes.forEach(function (tn) {
+                textNodes.forEach(function(tn) {
                     if (checkIfTextNodeNotEmpty(tn)) {
                         tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
                     }
@@ -182,7 +182,7 @@ const convertWeightNumber = function() {
     const wnLabelClass = '__label'
 
     let weights = queryAll(createMixQuery(wnDivClass, ...defaultPrefixes))
-    weights.forEach(function (el) {
+    weights.forEach(function(el) {
         const wnNumberSpan = el.querySelector(createMixQuery(wnDivClass + wnNumberClass, ...defaultPrefixes))
         const wnLabelSpan = el.querySelector(createMixQuery(wnDivClass + wnLabelClass, ...defaultPrefixes))
         replaceWeightWithKilo(el, wnNumberSpan, wnLabelSpan)

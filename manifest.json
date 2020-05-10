@@ -13,7 +13,9 @@
         },
         {
             "run_at": "document_end",
-            "matches": ["*://www.dndbeyond.com/monsters/*"],
+            "matches": [
+                "*://www.dndbeyond.com/monsters/*"
+            ],
             "js": ["src/utils.js", "src/monsterStats.js"]
         }
     ],
