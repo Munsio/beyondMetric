@@ -1,7 +1,11 @@
 {
     "name": "Beyond Metric",
-    "version": "1.0",
+    "short_name": "BM",
     "description": "An extension for dndbeyond that converts the measurements on the website in the metric system using Matthew Roy's method.",
+    "version": "1.0.0",
+    "icons": {
+        "128": "images/logo.png"
+    },
     "manifest_version": 2,
     "permissions": [
         "storage"
