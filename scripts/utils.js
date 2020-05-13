@@ -3,7 +3,7 @@ const convertedClass = 'bm-converted-to-metric'
 const waitForSwitchToBeTriggered = function (querryStirng, toggleType, callback) {
     chrome.storage.sync.get(querryStirng, function (result) {
         const toggleStates = result.bmToggleStates
-        if (toggleStates[toggleType]) {
+        if (toggleStates && toggleStates[toggleType]) {
             callback()
         }
     })
@@ -16,7 +16,7 @@ const addStorageListener = function (querryStirng, toggleType, callback) {
             if (key === querryStirng) {
                 const oldValue = storageChange.oldValue
                 const newValue = storageChange.newValue
-                if (oldValue[toggleType] !== newValue[toggleType]) {
+                if (!oldValue || oldValue[toggleType] !== newValue[toggleType]) {
                     if (newValue[toggleType]) {
                         callback()
                     } else {
