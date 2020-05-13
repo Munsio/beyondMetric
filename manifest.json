@@ -1,6 +1,7 @@
 {
-    "name": "beyondImperial",
+    "name": "Beyond Metric",
     "version": "1.0",
+    "description": "An extension for dndbeyond that converts the measurements on the website in the metric system using Matthew Roy's method.",
     "manifest_version": 2,
     "permissions": [
         "storage"
@@ -8,19 +9,27 @@
     "content_scripts": [
         {
             "run_at": "document_end",
-            "matches": ["*://www.dndbeyond.com/*characters/*"],
-            "js": ["src/utils.js", "src/characterSheet.js"]
+            "matches": [
+                "*://www.dndbeyond.com/*characters/*"
+            ],
+            "js": [
+                "scripts/utils.js",
+                "scripts/characterSheet.js"
+            ]
         },
         {
             "run_at": "document_end",
             "matches": [
                 "*://www.dndbeyond.com/monsters/*"
             ],
-            "js": ["src/utils.js", "src/monsterStats.js"]
+            "js": [
+                "scripts/utils.js",
+                "scripts/monsterStats.js"
+            ]
         }
     ],
     "browser_action": {
-        "default_popup": "src/popup/popup.html",
-        "default_icon": "BM_Logo.png"
+        "default_popup": "popup.html",
+        "default_icon": "images/logo.png"
     }
 }

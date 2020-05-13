@@ -10,30 +10,6 @@ const premiumPrefix = 'ddbc'
 const normalPrefix = 'ct'
 const defaultPrefixes = [premiumPrefix, normalPrefix]
 
-chrome.storage.sync.get('bmToggleStates', function(result) {
-    const toggleStates = result.bmToggleStates
-    if (toggleStates.csToggle) {
-        waitingForCharacterSheet()
-    }
-})
-
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-    for (var key in changes) {
-        var storageChange = changes[key];
-        if (key === 'bmToggleStates') {
-            const oldValue = storageChange.oldValue
-            const newValue = storageChange.newValue
-            if (oldValue.csToggle !== newValue.csToggle) {
-                if (newValue.csToggle) {
-                    waitingForCharacterSheet()
-                } else {
-                    location.reload()
-                }
-            }
-        }
-    }
-})
-
 // Wait for character sheet to load then trigger bmCharacterSheetLoaded event
 const waitingForCharacterSheet = function() {
     const loadingCharacterSheet = setInterval(function () {
@@ -200,3 +176,7 @@ const replaceWeightWithKilo = function(el, wnNumberSpan, wnLabelSpan) {
         markModified(el)
     }
 }
+
+
+waitForSwitchToBeTriggered('bmToggleStates', 'csToggle', waitingForCharacterSheet)
+addStorageListener('bmToggleStates', 'csToggle', waitingForCharacterSheet)
