@@ -1,50 +1,43 @@
-const interval = 100
-const observerConfig = { attributes: true, childList: true, subtree: true }
-const observerTarget = document
-
-const monsterStatsContainerClass = '.mon-stat-block'
-
+"use strict";
+const interval = 100;
+const observerConfig = { attributes: true, childList: true, subtree: true };
+const observerTarget = document;
+const monsterStatsContainerClass = '.mon-stat-block';
 // Wait for monster stats to load then trigger bmCharacterSheetLoaded event
 const waitingForMonsterStats = function () {
     const loadingCharacterSheet = setInterval(function () {
-        const monsterStatsLoaded = queryAll(monsterStatsContainerClass).length >= 1
+        const monsterStatsLoaded = queryAll(monsterStatsContainerClass).length >= 1;
         if (monsterStatsLoaded) {
-            monsterStatsAfterLoad()
-            clearInterval(loadingCharacterSheet)
+            monsterStatsAfterLoad();
+            clearInterval(loadingCharacterSheet);
         }
     }, interval);
-}
-
+};
 // This function is called after the monster stats were loaded
 const monsterStatsAfterLoad = function () {
-    replaceUnits()
-    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
-}
-
+    replaceUnits();
+    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig);
+};
 const replaceUnits = function () {
     setInterval(function () {
-        convertUnitsInMonsterText()
-    }, interval)
-}
-
+        convertUnitsInMonsterText();
+    }, interval);
+};
 // this case covers monster descriptions mon-stat-block and monster extra info more-info-content
 const convertUnitsInMonsterText = function () {
-    const moreInfoClass = '.more-info-content'
-    const statBlock = queryAll(monsterStatsContainerClass + ',' + moreInfoClass)
-
+    const moreInfoClass = '.more-info-content';
+    const statBlock = queryAll(monsterStatsContainerClass + ',' + moreInfoClass);
     statBlock.forEach(function (el) {
         if (checkIfNotEmpty(el) && !checkIfMarked(el, convertedClass)) {
-            const textNodes = textNodesUnder(el)
+            const textNodes = textNodesUnder(el);
             textNodes.forEach(function (tn) {
                 if (checkIfTextNodeNotEmpty(tn)) {
-                    tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
+                    tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent));
                 }
-            })
-            markModified(el)
+            });
+            markModified(el);
         }
-    })
-}
-
-
-waitForSwitchToBeTriggered('bmToggleStates', 'msToggle', waitingForMonsterStats)
-addStorageListener('bmToggleStates', 'msToggle', waitingForMonsterStats)
+    });
+};
+waitForSwitchToBeTriggered('bmToggleStates', 'msToggle', waitingForMonsterStats);
+addStorageListener('bmToggleStates', 'msToggle', waitingForMonsterStats);

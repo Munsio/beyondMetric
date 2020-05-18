@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",                      
+    "module": "commonjs",                    
+    "allowJs": true,                         
+    "outDir": "./scripts",                   
+    "strict": true,                          
+    "esModuleInterop": true,               
+    "skipLibCheck": true,                    
+    "forceConsistentCasingInFileNames": true 
+  },
+  "compileOnSave": true,
+  "include": ["TSscripts"],
+}
