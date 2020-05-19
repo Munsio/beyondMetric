@@ -269,7 +269,7 @@ class Utils {
     convertDistanceStringToMetric(ftString) {
         return this._distanceToMetricMap[ftString] || "m.";
     }
-    changeLabelToMetric(targetNode) {
+    changeLabelFromFeetToMeters(targetNode) {
         targetNode.innerHTML = this.convertDistanceStringToMetric(targetNode.innerHTML);
     }
     cleanCommas(text) {
@@ -283,9 +283,8 @@ class Utils {
         return Math.round((nr + Number.EPSILON) * 100) / 100;
     }
     convertDistanceFromFeetToMeters(distanceString) {
-        let distance = this.convertStringToNumber(distanceString);
-        let d5 = distance / 5;
-        return this.roundUp(d5 + d5 / 2);
+        const distance = this.convertStringToNumber(distanceString) / 5;
+        return this.roundUp(distance + distance / 2);
     }
     convertDistanceFromMilesToKilometers(distanceString) {
         let distance = this.convertStringToNumber(distanceString);
@@ -294,5 +293,12 @@ class Utils {
     convertLongRangeDistanceFromFeetToMeters(distanceString) {
         let distance = this.cleanCommas(distanceString.slice(1, distanceString.length - 1));
         return this.convertDistanceFromFeetToMeters(distance);
+    }
+    convertDistanceFromFeetToMetersInText(text) {
+        const that = this;
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function (_0, number, _1, label) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromFeetToMeters(label);
+        });
+        return text;
     }
 }

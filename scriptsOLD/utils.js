@@ -147,6 +147,8 @@ const calculateMetricDistanceInText = function (text) {
     text = text.replace(/([0-9]+) cubic (foot)/g, function (match, number, label) {
         return calculateMetricDistance(number) + ' cubic ' + feetStringEquivalent('feet') //TODO make it more generic
     })
+
+    
     text = text.replace(/([0-9]+) (mile)/g, function (match, number, label) {
         return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
     })
@@ -156,6 +158,8 @@ const calculateMetricDistanceInText = function (text) {
     text = text.replace(/([0-9]+) (miles)/g, function (match, number, label) {
         return calculateMileToKm(number) + ' ' + feetStringEquivalent(label)
     })
+
+
     text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, function (match, words, smallRange, bigRange) {
         return words + calculateMetricDistance(smallRange) + '/' + calculateMetricDistance(bigRange)
     })

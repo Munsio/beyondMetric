@@ -310,20 +310,20 @@ class Utils {
         return this._distanceToMetricMap[ftString] || "m.";
     }
 
-    public changeLabelFromFeetToMeters(targetNode: any): void {
+    private changeLabelFromImperialToMetric(targetNode: any): void {
         targetNode.innerHTML = this.convertDistanceStringToMetric(targetNode.innerHTML);
     }
 
-    public cleanCommas(text: string): string {
+    private cleanCommas(text: string): string {
         return text.replace(",", "");
     }
 
-    public convertStringToNumber(toConvert: string): number {
+    private convertStringToNumber(toConvert: string): number {
         const numberToReturn = Number(this.cleanCommas(toConvert));
         return isNaN(numberToReturn) ? -1 : numberToReturn;
     }
 
-    public roundUp(nr: number): number {
+    private roundUp(nr: number): number {
         return Math.round((nr + Number.EPSILON) * 100) / 100;
     }
 
@@ -332,7 +332,7 @@ class Utils {
         return this.roundUp(distance + distance / 2);
     }
 
-    public convertDistanceFromMilesToKilometers(distanceString: string): number {
+    private convertDistanceFromMilesToKilometers(distanceString: string): number {
         let distance = this.convertStringToNumber(distanceString);
         return this.roundUp(distance * 1.6);
     }
@@ -340,6 +340,53 @@ class Utils {
     public convertLongRangeDistanceFromFeetToMeters(distanceString: string): number {
         let distance = this.cleanCommas(distanceString.slice(1, distanceString.length - 1));
         return this.convertDistanceFromFeetToMeters(distance);
+    }
+
+    private convertDistanceFromFeetToMetersInText(text: string): string {
+        const that = this;
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function (_0, number: string, _1, label: string) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (feet)/g, function (_0, number: string, label: string) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+)-(foot)/g, function (_0, number: string, label: string) {
+            return that.convertDistanceFromFeetToMeters(number) + '-' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (ft.)/g, function (_0, number: string, label: string) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) cubic (foot)/g, function (_0, number: string, _1) {
+            // TODO Replace this to be generic
+            return that.convertDistanceFromFeetToMeters(number) + ' cubic ' + that.changeLabelFromImperialToMetric('feet');
+        });
+        text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, function (_0, words: string, smallRange: string, bigRange: string) {
+            return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
+        });
+        text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, function (_0, words: string, smallRange: string, bigRange: string) {
+            return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
+        });
+        return text;
+    }
+
+    private convertDistanceFromMilesToKilometersInText(text: string): string {
+        const that = this;
+        text = text.replace(/([0-9]+) (mile)/g, function (_0, number: string, label: string) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, function (_0, number: string, _1, label: string) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (miles)/g, function (_0, number: string, label: string) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        return text;
+    }
+
+    public convertDistanceFromImperialToMetricInText(text: string): string {
+        text = this.convertDistanceFromFeetToMetersInText(text);
+        text = this.convertDistanceFromMilesToKilometersInText(text);
+        return text;
     }
 
 }
