@@ -1,26 +1,5 @@
-"use strict";
-const csToggle = query('#csToggle');
-const msToggle = query('#msToggle');
-const toggles = queryAll('#csToggle, #msToggle');
-const loadValuesToToggle = function () {
-    chrome.storage.sync.get('bmToggleStates', function (result) {
-        const toggleStates = result.bmToggleStates;
-        csToggle.checked = toggleStates && toggleStates.csToggle ? true : false;
-        msToggle.checked = toggleStates && toggleStates.msToggle ? true : false;
-    });
-};
-const saveChanges = function () {
-    const bmToggleStates = {
-        'csToggle': csToggle.checked,
-        'msToggle': msToggle.checked
-    };
-    chrome.storage.sync.set({ 'bmToggleStates': bmToggleStates });
-};
-document.addEventListener('DOMContentLoaded', function () {
-    loadValuesToToggle();
-});
-toggles.forEach(el => {
-    el.addEventListener('change', function (ev) {
-        saveChanges();
-    });
-});
+"use strict";class Popup{constructor(){this._csToggleString="#csToggle";this._msToggleString="#msToggle";this._togglesString="#csToggle, #msToggle";this._utils=new Utils();this._csToggle=this._utils.query(this._csToggleString);this._msToggle=this._utils.query(this._msToggleString);this._toggles=this._utils.queryAll(this._togglesString);}
+loadToggleValuesFromStorage(){let that=this;chrome.storage.sync.get('bmToggleStates',function(result){const toggleStates=result.bmToggleStates;if(toggleStates){that._csToggle.checked=toggleStates.csToggle?true:false;that._msToggle.checked=toggleStates.msToggle?true:false;}});}
+saveChanges(){const bmToggleStates={'csToggle':this._csToggle.checked,'msToggle':this._msToggle.checked};chrome.storage.sync.set({'bmToggleStates':bmToggleStates});}
+run(){let that=this;document.addEventListener('DOMContentLoaded',()=>{that.loadToggleValuesFromStorage();});this._toggles.forEach((toggle)=>{toggle.addEventListener('change',()=>{that.saveChanges();});});}}
+new Popup().run();

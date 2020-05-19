@@ -236,7 +236,7 @@ class Utils {
     }
 
     public checkToggleInStorage(storageLocation: string, item: string, callback: Function): void {
-        chrome.storage.sync.get(storageLocation, function (result: any) {
+        chrome.storage.sync.get(storageLocation, (result: any) => {
             const toggleStates = result.bmToggleStates;
             if (toggleStates && toggleStates[item] && callback) {
                 callback();
@@ -245,7 +245,7 @@ class Utils {
     }
 
     public addStorageListener(storageLocation: string, item: string, callback: Function): void {
-        chrome.storage.onChanged.addListener(function (changes: any) {
+        chrome.storage.onChanged.addListener((changes: any) => {
             for (const key in changes) {
                 if (changes.hasOwnProperty(key) && key === storageLocation) {
                     const oldValue = changes[key].oldValue;
@@ -344,26 +344,26 @@ class Utils {
 
     private convertDistanceFromFeetToMetersInText(text: string): string {
         const that = this;
-        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function (_0, number: string, _1, label: string) {
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, (_0, number: string, _1, label: string) => {
             return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]+) (feet)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (feet)/g, (_0, number: string, label: string) => {
             return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]+)-(foot)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+)-(foot)/g, (_0, number: string, label: string) => {
             return that.convertDistanceFromFeetToMeters(number) + '-' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]+) (ft.)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (ft.)/g, (_0, number: string, label: string) => {
             return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]+) cubic (foot)/g, function (_0, number: string, _1) {
+        text = text.replace(/([0-9]+) cubic (foot)/g, (_0, number: string, _1) => {
             // TODO Replace this to be generic
             return that.convertDistanceFromFeetToMeters(number) + ' cubic ' + that.changeLabelFromImperialToMetric('feet');
         });
-        text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, function (_0, words: string, smallRange: string, bigRange: string) {
+        text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, (_0, words: string, smallRange: string, bigRange: string) => {
             return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
         });
-        text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, function (_0, words: string, smallRange: string, bigRange: string) {
+        text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, (_0, words: string, smallRange: string, bigRange: string) => {
             return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
         });
         return text;
@@ -371,13 +371,13 @@ class Utils {
 
     private convertDistanceFromMilesToKilometersInText(text: string): string {
         const that = this;
-        text = text.replace(/([0-9]+) (mile)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (mile)/g, (_0, number: string, label: string) => {
             return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, function (_0, number: string, _1, label: string) {
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, (_0, number: string, _1, label: string) => {
             return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
-        text = text.replace(/([0-9]+) (miles)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (miles)/g, (_0, number: string, label: string) => {
             return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
         });
         return text;
@@ -404,13 +404,13 @@ class Utils {
 
     public convertMassFromPoundsToKilogramsInText(text: string): string {
         let that = this;
-        text = text.replace(/([0-9]+) (pounds)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (pounds)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
         })
-        text = text.replace(/([0-9]+) (pound)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (pound)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
         })
-        text = text.replace(/([0-9]+) (lb.)/g, function (_0, number: string, label: string) {
+        text = text.replace(/([0-9]+) (lb.)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
         })
 
