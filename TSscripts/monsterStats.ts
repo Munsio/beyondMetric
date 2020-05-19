@@ -1,50 +1,59 @@
-const interval = 100
-const observerConfig = { attributes: true, childList: true, subtree: true }
-const observerTarget = document
+class MonsterStats {
+    private _interval: number;
+    private _observerConfig = { attributes: true, childList: true, subtree: true };
+    private _observerTarget = document;
+    private _monsterStatsContainerClass = ".mon-stat-block";
+    private _utils: Utils;
 
-const monsterStatsContainerClass = '.mon-stat-block'
+    constructor(interval: number) {
+        this._interval = interval;
+        this._utils = new Utils;
+    }
 
-// Wait for monster stats to load then trigger bmCharacterSheetLoaded event
-const waitingForMonsterStats = function () {
-    const loadingCharacterSheet = setInterval(function () {
-        const monsterStatsLoaded = queryAll(monsterStatsContainerClass).length >= 1
-        if (monsterStatsLoaded) {
-            monsterStatsAfterLoad()
-            clearInterval(loadingCharacterSheet)
-        }
-    }, interval);
-}
+    private waitForPageToLoad(): void {
+        const that = this;
+        const pageLoading = setInterval(() => {
+            const pageLoaded = that._utils.queryAll(that._monsterStatsContainerClass).length >= 1;
+            if (pageLoaded) {
+                that.afterPageLoaded();
+                clearInterval(pageLoading);
+            }
+        }, this._interval);
+    }
 
-// This function is called after the monster stats were loaded
-const monsterStatsAfterLoad = function () {
-    replaceUnits()
-    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
-}
+    private afterPageLoaded(): void {
+        this.replaceUnits();
+        new MutationObserver(this.convertUnitsInMonsterStats.bind(this)).observe(this._observerTarget, this._observerConfig);
+    }
 
-const replaceUnits = function () {
-    setInterval(function () {
-        convertUnitsInMonsterText()
-    }, interval)
-}
+    private replaceUnits(): void {
+        this.convertUnitsInMonsterStats();
+    }
 
-// this case covers monster descriptions mon-stat-block and monster extra info more-info-content
-const convertUnitsInMonsterText = function () {
-    const moreInfoClass = '.more-info-content'
-    const statBlock = queryAll(monsterStatsContainerClass + ',' + moreInfoClass)
+    private convertUnitsInMonsterStats() {
+        const moreInfoClass = ".more-info-content";
+        const statBlock = this._utils.queryAll(this._monsterStatsContainerClass + "," + moreInfoClass);
+        const that = this;
 
-    statBlock.forEach(function (el) {
-        if (checkIfNotEmpty(el) && !checkIfMarked(el, convertedClass)) {
-            const textNodes = textNodesUnder(el)
-            textNodes.forEach(function (tn) {
-                if (checkIfTextNodeNotEmpty(tn)) {
-                    tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
+        statBlock.forEach((el: any) => {
+            if (!that._utils.checkIfNodeEmpty(el) && !that._utils.checkIfNodeHasClass(el, that._utils.convertedClass)) {
+                const textNodes = that._utils.extractTextNodes(el);
+                if (textNodes) {
+                    textNodes.forEach((textNode: any) => {
+                        if (!that._utils.checkIfTextNodeEmpty(textNode)) {
+                            textNode.textContent = that._utils.convertMassFromPoundsToKilogramsInText(that._utils.convertDistanceFromImperialToMetricInText(textNode.textContent));
+                        }
+                    });
+                    that._utils.markModified(el);
                 }
-            })
-            markModified(el)
-        }
-    })
+            }
+        });
+    }
+
+    public run(): void {
+        this._utils.checkToggleInStorage("bmToggleStates", "msToggle", this.waitForPageToLoad.bind(this));
+        this._utils.addStorageListener("bmToggleStates", "msToggle", this.waitForPageToLoad.bind(this));
+    }
 }
 
-
-waitForSwitchToBeTriggered('bmToggleStates', 'msToggle', waitingForMonsterStats)
-addStorageListener('bmToggleStates', 'msToggle', waitingForMonsterStats)
+new MonsterStats(100).run();

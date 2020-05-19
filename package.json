@@ -8,9 +8,9 @@
     "@types/chrome": "0.0.112"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "minify": "jsmin -o .\\scripts\\popup.js .\\scripts\\popup.js & jsmin -o .\\scripts\\utils.js .\\scripts\\utils.js & jsmin -o .\\scripts\\monsterStats.js .\\scripts\\monsterStats.js & jsmin -o .\\scripts\\characterSheet.js .\\scripts\\characterSheet.js",
-    "build": "tsc & npm run minify"
+    "build": "tsc & npm run minify",
+    "dev": "tsc -w"
   },
   "repository": {
     "type": "git",

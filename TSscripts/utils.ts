@@ -227,14 +227,6 @@ class Utils {
         return this._convertedClass;
     }
 
-    get distanceToMetricMap(): Object {
-        return this._distanceToMetricMap;
-    }
-
-    get massToKilogramsMap(): Object {
-        return this._massToKilogramsMap;
-    }
-
     public checkToggleInStorage(storageLocation: string, item: string, callback: Function): void {
         chrome.storage.sync.get(storageLocation, (result: any) => {
             const toggleStates = result.bmToggleStates;
@@ -278,7 +270,7 @@ class Utils {
         return textNodes;
     }
 
-    public checkIfNodeEmpty(targetNode: any, isSpecialValue: boolean): boolean {
+    public checkIfNodeEmpty(targetNode: any, isSpecialValue?: boolean): boolean {
         if (targetNode && targetNode.innerHTML) {
             if (isSpecialValue) {
                 return targetNode.innerHTML === "--";
@@ -345,20 +337,20 @@ class Utils {
     private convertDistanceFromFeetToMetersInText(text: string): string {
         const that = this;
         text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, (_0, number: string, _1, label: string) => {
-            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]+) (feet)/g, (_0, number: string, label: string) => {
-            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]+)-(foot)/g, (_0, number: string, label: string) => {
-            return that.convertDistanceFromFeetToMeters(number) + '-' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromFeetToMeters(number) + '-' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]+) (ft.)/g, (_0, number: string, label: string) => {
-            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]+) cubic (foot)/g, (_0, number: string, _1) => {
             // TODO Replace this to be generic
-            return that.convertDistanceFromFeetToMeters(number) + ' cubic ' + that.changeLabelFromImperialToMetric('feet');
+            return that.convertDistanceFromFeetToMeters(number) + ' cubic ' + that.convertDistanceStringToMetric('feet');
         });
         text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, (_0, words: string, smallRange: string, bigRange: string) => {
             return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
@@ -372,13 +364,13 @@ class Utils {
     private convertDistanceFromMilesToKilometersInText(text: string): string {
         const that = this;
         text = text.replace(/([0-9]+) (mile)/g, (_0, number: string, label: string) => {
-            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, (_0, number: string, _1, label: string) => {
-            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         text = text.replace(/([0-9]+) (miles)/g, (_0, number: string, label: string) => {
-            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.convertDistanceStringToMetric(label);
         });
         return text;
     }
