@@ -269,7 +269,7 @@ class Utils {
     convertDistanceStringToMetric(ftString) {
         return this._distanceToMetricMap[ftString] || "m.";
     }
-    changeLabelFromFeetToMeters(targetNode) {
+    changeLabelFromImperialToMetric(targetNode) {
         targetNode.innerHTML = this.convertDistanceStringToMetric(targetNode.innerHTML);
     }
     cleanCommas(text) {
@@ -297,7 +297,67 @@ class Utils {
     convertDistanceFromFeetToMetersInText(text) {
         const that = this;
         text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (feet)/g, function (_0, number, _1, label) {
-            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromFeetToMeters(label);
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (feet)/g, function (_0, number, label) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+)-(foot)/g, function (_0, number, label) {
+            return that.convertDistanceFromFeetToMeters(number) + '-' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (ft.)/g, function (_0, number, label) {
+            return that.convertDistanceFromFeetToMeters(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) cubic (foot)/g, function (_0, number, _1) {
+            // TODO Replace this to be generic
+            return that.convertDistanceFromFeetToMeters(number) + ' cubic ' + that.changeLabelFromImperialToMetric('feet');
+        });
+        text = text.replace(/(range of )([0-9]+)\/([0-9]+)/g, function (_0, words, smallRange, bigRange) {
+            return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
+        });
+        text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, function (_0, words, smallRange, bigRange) {
+            return words + that.convertDistanceFromFeetToMeters(smallRange) + '/' + that.convertDistanceFromFeetToMeters(bigRange);
+        });
+        return text;
+    }
+    convertDistanceFromMilesToKilometersInText(text) {
+        const that = this;
+        text = text.replace(/([0-9]+) (mile)/g, function (_0, number, label) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]{1,3}(,[0-9]{3})+) (miles)/g, function (_0, number, _1, label) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        text = text.replace(/([0-9]+) (miles)/g, function (_0, number, label) {
+            return that.convertDistanceFromMilesToKilometers(number) + ' ' + that.changeLabelFromImperialToMetric(label);
+        });
+        return text;
+    }
+    convertDistanceFromImperialToMetricInText(text) {
+        text = this.convertDistanceFromFeetToMetersInText(text);
+        text = this.convertDistanceFromMilesToKilometersInText(text);
+        return text;
+    }
+    convertMassStringToKilograms(lbString) {
+        return this._massToKilogramsMap[lbString] || "lb.";
+    }
+    changeLabelFromPoundsToKilograms(targetNode) {
+        targetNode.innerHTML = this.convertMassStringToKilograms(targetNode.innerHTML);
+    }
+    convertMassFromPoundsToKilograms(massString) {
+        let mass = this.convertStringToNumber(massString);
+        return mass / 2;
+    }
+    convertMassFromPoundsToKilogramsInText(text) {
+        let that = this;
+        text = text.replace(/([0-9]+) (pounds)/g, function (_0, number, label) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
+        });
+        text = text.replace(/([0-9]+) (pound)/g, function (_0, number, label) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
+        });
+        text = text.replace(/([0-9]+) (lb.)/g, function (_0, number, label) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
         });
         return text;
     }

@@ -306,11 +306,11 @@ class Utils {
         return targetNode.classList.contains(classToCheck);
     }
 
-    public convertDistanceStringToMetric(ftString: string): string {
+    private convertDistanceStringToMetric(ftString: string): string {
         return this._distanceToMetricMap[ftString] || "m.";
     }
 
-    private changeLabelFromImperialToMetric(targetNode: any): void {
+    public changeLabelFromImperialToMetric(targetNode: any): void {
         targetNode.innerHTML = this.convertDistanceStringToMetric(targetNode.innerHTML);
     }
 
@@ -387,6 +387,34 @@ class Utils {
         text = this.convertDistanceFromFeetToMetersInText(text);
         text = this.convertDistanceFromMilesToKilometersInText(text);
         return text;
+    }
+
+    private convertMassStringToKilograms(lbString: string): string {
+        return this._massToKilogramsMap[lbString] || "lb.";
+    }
+
+    public changeLabelFromPoundsToKilograms(targetNode: any): void {
+        targetNode.innerHTML = this.convertMassStringToKilograms(targetNode.innerHTML);
+    }
+
+    public convertMassFromPoundsToKilograms(massString: string): number {
+        let mass = this.convertStringToNumber(massString);
+        return mass / 2;
+    }
+
+    public convertMassFromPoundsToKilogramsInText(text: string): string {
+        let that = this;
+        text = text.replace(/([0-9]+) (pounds)/g, function (_0, number: string, label: string) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
+        })
+        text = text.replace(/([0-9]+) (pound)/g, function (_0, number: string, label: string) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
+        })
+        text = text.replace(/([0-9]+) (lb.)/g, function (_0, number: string, label: string) {
+            return that.convertMassFromPoundsToKilograms(number) + ' ' + that.convertMassStringToKilograms(label);
+        })
+
+        return text
     }
 
 }
