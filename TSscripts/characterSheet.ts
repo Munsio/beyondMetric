@@ -11,12 +11,12 @@ const normalPrefix = 'ct'
 const defaultPrefixes = [premiumPrefix, normalPrefix]
 
 // Wait for character sheet to load then trigger bmCharacterSheetLoaded event
-const waitingForCharacterSheet = function() {
+const waitingForCharacterSheet = function () {
     const loadingCharacterSheet = setInterval(function () {
-        const queryString = premiumTarget + sufixTarget + ',' + 
-            normalTarget  + sufixTarget   + ',' + 
-            premiumTarget + compactTarget + ',' + 
-            normalTarget  + compactTarget
+        const queryString = premiumTarget + sufixTarget + ',' +
+            normalTarget + sufixTarget + ',' +
+            premiumTarget + compactTarget + ',' +
+            normalTarget + compactTarget
 
         const characterSheetLoaded = queryAll(queryString).length >= 1
         if (characterSheetLoaded) {
@@ -27,12 +27,12 @@ const waitingForCharacterSheet = function() {
 }
 
 // This function is called after the character sheet is loaded
-const characterSheetAfterLoad = function() {
+const characterSheetAfterLoad = function () {
     replaceUnits()
     new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
 }
 
-const replaceUnits = function(mutationsList, observer) {
+const replaceUnits = function (mutationsList, observer) {
     convertDistanceNumbers()
     convertRangeNumbers()
     convertUnitsInSnippets()
@@ -42,20 +42,20 @@ const replaceUnits = function(mutationsList, observer) {
 }
 
 // this case covers simple distances: distance-number
-const convertDistanceNumbers = function() {
+const convertDistanceNumbers = function () {
     const dnDivClass = 'distance-number'
     const dnNumberClass = '__number'
     const dnLabelClass = '__label'
 
     let distances = queryAll(createMixQuery(dnDivClass, ...defaultPrefixes))
-    distances.forEach(function(el) {
+    distances.forEach(function (el) {
         const dnNumberSpan = el.querySelector(createMixQuery(dnDivClass + dnNumberClass, ...defaultPrefixes))
         const dnLabelSpan = el.querySelector(createMixQuery(dnDivClass + dnLabelClass, ...defaultPrefixes))
         replaceSimpleDistancWithMetric(el, dnNumberSpan, dnLabelSpan)
     })
 }
 
-const replaceSimpleDistancWithMetric = function(el, dnNumberSpan, dnLabelSpan) {
+const replaceSimpleDistancWithMetric = function (el, dnNumberSpan, dnLabelSpan) {
     if (!checkIfMarked(el, convertedClass)) {
         if (checkIfNotEmpty(dnNumberSpan, true)) {
             dnNumberSpan.innerHTML = calculateMetricDistance(dnNumberSpan.innerHTML)
@@ -68,20 +68,20 @@ const replaceSimpleDistancWithMetric = function(el, dnNumberSpan, dnLabelSpan) {
 }
 
 // this case covers range weapons range attacks: combat-attack__range-value
-const convertRangeNumbers = function() {
+const convertRangeNumbers = function () {
     const rnDivClass = 'combat-attack__range-value'
     const rnCloseClass = '-close'
     const rnLongClass = '-long'
 
     let distances = queryAll(createMixQuery(rnDivClass, ...defaultPrefixes))
-    distances.forEach(function(el) {
+    distances.forEach(function (el) {
         const rnClose = el.querySelector(createMixQuery(rnDivClass + rnCloseClass, ...defaultPrefixes))
         const rnLong = el.querySelector(createMixQuery(rnDivClass + rnLongClass, ...defaultPrefixes))
         replaceRangeDistanceWithMetric(el, rnClose, rnLong)
     })
 }
 
-const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
+const replaceRangeDistanceWithMetric = function (el, rnClose, rnLong) {
     if (!checkIfMarked(el, convertedClass)) {
         if (checkIfNotEmpty(rnClose, true)) {
             rnClose.innerHTML = calculateMetricDistance(rnClose.innerHTML)
@@ -99,39 +99,39 @@ const replaceRangeDistanceWithMetric = function(el, rnClose, rnLong) {
 // - action details action-detail__description
 // - spell details spell-detail__description
 // - features snippets snippet__content
-const convertDescriptions = function() {
+const convertDescriptions = function () {
     const premiumClass = '.ddbc-html-content'
-    const normalClasses = 
-        '.ct-item-detail__description, '   + 
-        '.ct-action-detail__description, ' + 
-        '.ct-spell-detail__description, '  +
+    const normalClasses =
+        '.ct-item-detail__description, ' +
+        '.ct-action-detail__description, ' +
+        '.ct-spell-detail__description, ' +
         '.ct-snippet__content'
 
     const classes = premiumClass + ', ' + normalClasses
 
     let containers = queryAll(classes)
-    containers.forEach(function(el) {
+    containers.forEach(function (el) {
         replaceUnitsInTextWith(el)
     })
 }
 
 // this case covers snipets jsx-parser
-const convertUnitsInSnippets = function() {
+const convertUnitsInSnippets = function () {
     const sDivClass = '.jsx-parser'
 
     let pContainers = queryAll(sDivClass)
-    pContainers.forEach(function(el) {
+    pContainers.forEach(function (el) {
         replaceUnitsInTextWith(el)
     })
 }
 
-const replaceUnitsInTextWith = function(el) {
+const replaceUnitsInTextWith = function (el) {
     if (!checkIfMarked(el, convertedClass)) {
         let paragraphs = queryAll('p', el)
-        paragraphs.forEach(function(p) {
-            if (checkIfNotEmpty(p)){
+        paragraphs.forEach(function (p) {
+            if (checkIfNotEmpty(p)) {
                 const textNodes = textNodesUnder(p)
-                textNodes.forEach(function(tn) {
+                textNodes.forEach(function (tn) {
                     if (checkIfTextNodeNotEmpty(tn)) {
                         tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
                     }
@@ -143,29 +143,29 @@ const replaceUnitsInTextWith = function(el) {
 }
 
 // this case covers senses summary senses__summary
-const covertSenses = function() {
+const covertSenses = function () {
     const sensesClass = '.ct-senses__summary'
     let containers = queryAll(sensesClass)
-    containers.forEach(function(el) {
+    containers.forEach(function (el) {
         el.textContent = calculateMetricDistanceInText(el.textContent)
     })
 }
 
 // this case covers the conversion from lbs to kg
-const convertWeightNumber = function() {
+const convertWeightNumber = function () {
     const wnDivClass = 'weight-number'
     const wnNumberClass = '__number'
     const wnLabelClass = '__label'
 
     let weights = queryAll(createMixQuery(wnDivClass, ...defaultPrefixes))
-    weights.forEach(function(el) {
+    weights.forEach(function (el) {
         const wnNumberSpan = el.querySelector(createMixQuery(wnDivClass + wnNumberClass, ...defaultPrefixes))
         const wnLabelSpan = el.querySelector(createMixQuery(wnDivClass + wnLabelClass, ...defaultPrefixes))
         replaceWeightWithKilo(el, wnNumberSpan, wnLabelSpan)
-    }) 
+    })
 }
 
-const replaceWeightWithKilo = function(el, wnNumberSpan, wnLabelSpan) {
+const replaceWeightWithKilo = function (el, wnNumberSpan, wnLabelSpan) {
     if (!checkIfMarked(el, convertedClass)) {
         if (checkIfNotEmpty(wnNumberSpan, true)) {
             wnNumberSpan.innerHTML = calculateKiloWeight(wnNumberSpan.innerHTML)
@@ -180,3 +180,23 @@ const replaceWeightWithKilo = function(el, wnNumberSpan, wnLabelSpan) {
 
 waitForSwitchToBeTriggered('bmToggleStates', 'csToggle', waitingForCharacterSheet)
 addStorageListener('bmToggleStates', 'csToggle', waitingForCharacterSheet)
+
+class CharacterSheet {
+    private _interval: number;
+    private _observerConfig = { attributes: true, childList: true, subtree: true };
+    private _observerTarget = document;
+    private _utils: Utils;
+
+    constructor(interval: number) {
+        this._interval = interval;
+        this._utils = new Utils;
+    }
+
+    public run(): void {
+        // this._utils.checkToggleInStorage("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
+        // this._utils.addStorageListener("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
+    }
+}
+
+new CharacterSheet(100).run();
+
