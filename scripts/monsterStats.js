@@ -1,7 +1,0 @@
-"use strict";class MonsterStats{constructor(interval){this._observerConfig={attributes:true,childList:true,subtree:true};this._observerTarget=document;this._monsterStatsContainerClass=".mon-stat-block";this._interval=interval;this._utils=new Utils;}
-waitForPageToLoad(){const that=this;const pageLoading=setInterval(()=>{const pageLoaded=that._utils.queryAll(that._monsterStatsContainerClass).length>=1;if(pageLoaded){that.afterPageLoaded();clearInterval(pageLoading);}},this._interval);}
-afterPageLoaded(){this.replaceUnits();new MutationObserver(this.convertUnitsInMonsterStats.bind(this)).observe(this._observerTarget,this._observerConfig);}
-replaceUnits(){this.convertUnitsInMonsterStats();}
-convertUnitsInMonsterStats(){const moreInfoClass=".more-info-content";const statBlock=this._utils.queryAll(this._monsterStatsContainerClass+","+moreInfoClass);const that=this;statBlock.forEach((el)=>{if(!that._utils.checkIfNodeEmpty(el)&&!that._utils.checkIfNodeHasClass(el,that._utils.convertedClass)){const textNodes=that._utils.extractTextNodes(el);if(textNodes){textNodes.forEach((textNode)=>{if(!that._utils.checkIfTextNodeEmpty(textNode)){textNode.textContent=that._utils.convertMassFromPoundsToKilogramsInText(that._utils.convertDistanceFromImperialToMetricInText(textNode.textContent));}});that._utils.markModified(el);}}});}
-run(){this._utils.checkToggleInStorage("bmToggleStates","msToggle",this.waitForPageToLoad.bind(this));this._utils.addStorageListener("bmToggleStates","msToggle",this.waitForPageToLoad.bind(this));}}
-new MonsterStats(100).run();

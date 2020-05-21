@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A chrome plugin that converts the imperial measurements from dndbeyond in metric using Matthew Roy's rules",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "jsmin": "^1.0.1",
+    "typescript": "^3.9.3"
+  },
   "devDependencies": {
     "@types/chrome": "0.0.112"
   },

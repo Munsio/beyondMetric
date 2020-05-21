@@ -15,7 +15,7 @@ class Popup {
     }
 
     private loadToggleValuesFromStorage(): void {
-        let that = this;
+        const that = this;
 
         chrome.storage.sync.get("bmToggleStates", function (result) {
             const toggleStates = result.bmToggleStates;
@@ -36,7 +36,7 @@ class Popup {
     }
 
     public run(): void {
-        let that = this;
+        const that = this;
 
         document.addEventListener("DOMContentLoaded", () => {
             that.loadToggleValuesFromStorage();

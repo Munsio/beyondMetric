@@ -1,200 +1,92 @@
-const interval = 100
-const observerConfig = { attributes: true, childList: true, subtree: true }
-const observerTarget = document
-
-const premiumTarget = '#character-tools-target'
-const normalTarget = '#character-sheet-target'
-const sufixTarget = ' > .ct-character-sheet .ct-quick-info__ability'
-const compactTarget = '> .ct-character-sheet .ct-skills'
-const premiumPrefix = 'ddbc'
-const normalPrefix = 'ct'
-const defaultPrefixes = [premiumPrefix, normalPrefix]
-
-// Wait for character sheet to load then trigger bmCharacterSheetLoaded event
-const waitingForCharacterSheet = function () {
-    const loadingCharacterSheet = setInterval(function () {
-        const queryString = premiumTarget + sufixTarget + ',' +
-            normalTarget + sufixTarget + ',' +
-            premiumTarget + compactTarget + ',' +
-            normalTarget + compactTarget
-
-        const characterSheetLoaded = queryAll(queryString).length >= 1
-        if (characterSheetLoaded) {
-            characterSheetAfterLoad()
-            clearInterval(loadingCharacterSheet)
-        }
-    }, interval);
-}
-
-// This function is called after the character sheet is loaded
-const characterSheetAfterLoad = function () {
-    replaceUnits()
-    new MutationObserver(replaceUnits).observe(observerTarget, observerConfig)
-}
-
-const replaceUnits = function (mutationsList, observer) {
-    convertDistanceNumbers()
-    convertRangeNumbers()
-    convertUnitsInSnippets()
-    convertDescriptions()
-    covertSenses()
-    convertWeightNumber()
-}
-
-// this case covers simple distances: distance-number
-const convertDistanceNumbers = function () {
-    const dnDivClass = 'distance-number'
-    const dnNumberClass = '__number'
-    const dnLabelClass = '__label'
-
-    let distances = queryAll(createMixQuery(dnDivClass, ...defaultPrefixes))
-    distances.forEach(function (el) {
-        const dnNumberSpan = el.querySelector(createMixQuery(dnDivClass + dnNumberClass, ...defaultPrefixes))
-        const dnLabelSpan = el.querySelector(createMixQuery(dnDivClass + dnLabelClass, ...defaultPrefixes))
-        replaceSimpleDistancWithMetric(el, dnNumberSpan, dnLabelSpan)
-    })
-}
-
-const replaceSimpleDistancWithMetric = function (el, dnNumberSpan, dnLabelSpan) {
-    if (!checkIfMarked(el, convertedClass)) {
-        if (checkIfNotEmpty(dnNumberSpan, true)) {
-            dnNumberSpan.innerHTML = calculateMetricDistance(dnNumberSpan.innerHTML)
-        }
-        if (checkIfNotEmpty(dnLabelSpan)) {
-            changeLabelToMetric(dnLabelSpan)
-        }
-        markModified(el)
-    }
-}
-
-// this case covers range weapons range attacks: combat-attack__range-value
-const convertRangeNumbers = function () {
-    const rnDivClass = 'combat-attack__range-value'
-    const rnCloseClass = '-close'
-    const rnLongClass = '-long'
-
-    let distances = queryAll(createMixQuery(rnDivClass, ...defaultPrefixes))
-    distances.forEach(function (el) {
-        const rnClose = el.querySelector(createMixQuery(rnDivClass + rnCloseClass, ...defaultPrefixes))
-        const rnLong = el.querySelector(createMixQuery(rnDivClass + rnLongClass, ...defaultPrefixes))
-        replaceRangeDistanceWithMetric(el, rnClose, rnLong)
-    })
-}
-
-const replaceRangeDistanceWithMetric = function (el, rnClose, rnLong) {
-    if (!checkIfMarked(el, convertedClass)) {
-        if (checkIfNotEmpty(rnClose, true)) {
-            rnClose.innerHTML = calculateMetricDistance(rnClose.innerHTML)
-        }
-        if (checkIfNotEmpty(rnLong, true)) {
-            rnLong.innerHTML = replaceLongRangeDistance(rnLong.innerHTML)
-        }
-        markModified(el)
-    }
-}
-
-// this case covers all descriptions for premium users
-// and for normal users:
-// - item descriptions item-detail__description
-// - action details action-detail__description
-// - spell details spell-detail__description
-// - features snippets snippet__content
-const convertDescriptions = function () {
-    const premiumClass = '.ddbc-html-content'
-    const normalClasses =
-        '.ct-item-detail__description, ' +
-        '.ct-action-detail__description, ' +
-        '.ct-spell-detail__description, ' +
-        '.ct-snippet__content'
-
-    const classes = premiumClass + ', ' + normalClasses
-
-    let containers = queryAll(classes)
-    containers.forEach(function (el) {
-        replaceUnitsInTextWith(el)
-    })
-}
-
-// this case covers snipets jsx-parser
-const convertUnitsInSnippets = function () {
-    const sDivClass = '.jsx-parser'
-
-    let pContainers = queryAll(sDivClass)
-    pContainers.forEach(function (el) {
-        replaceUnitsInTextWith(el)
-    })
-}
-
-const replaceUnitsInTextWith = function (el) {
-    if (!checkIfMarked(el, convertedClass)) {
-        let paragraphs = queryAll('p', el)
-        paragraphs.forEach(function (p) {
-            if (checkIfNotEmpty(p)) {
-                const textNodes = textNodesUnder(p)
-                textNodes.forEach(function (tn) {
-                    if (checkIfTextNodeNotEmpty(tn)) {
-                        tn.textContent = calculateWeightInText(calculateMetricDistanceInText(tn.textContent))
-                    }
-                })
-            }
-        })
-        markModified(el)
-    }
-}
-
-// this case covers senses summary senses__summary
-const covertSenses = function () {
-    const sensesClass = '.ct-senses__summary'
-    let containers = queryAll(sensesClass)
-    containers.forEach(function (el) {
-        el.textContent = calculateMetricDistanceInText(el.textContent)
-    })
-}
-
-// this case covers the conversion from lbs to kg
-const convertWeightNumber = function () {
-    const wnDivClass = 'weight-number'
-    const wnNumberClass = '__number'
-    const wnLabelClass = '__label'
-
-    let weights = queryAll(createMixQuery(wnDivClass, ...defaultPrefixes))
-    weights.forEach(function (el) {
-        const wnNumberSpan = el.querySelector(createMixQuery(wnDivClass + wnNumberClass, ...defaultPrefixes))
-        const wnLabelSpan = el.querySelector(createMixQuery(wnDivClass + wnLabelClass, ...defaultPrefixes))
-        replaceWeightWithKilo(el, wnNumberSpan, wnLabelSpan)
-    })
-}
-
-const replaceWeightWithKilo = function (el, wnNumberSpan, wnLabelSpan) {
-    if (!checkIfMarked(el, convertedClass)) {
-        if (checkIfNotEmpty(wnNumberSpan, true)) {
-            wnNumberSpan.innerHTML = calculateKiloWeight(wnNumberSpan.innerHTML)
-        }
-        if (checkIfNotEmpty(wnLabelSpan)) {
-            replaceLabelWithKilo(wnLabelSpan)
-        }
-        markModified(el)
-    }
-}
-
-
-waitForSwitchToBeTriggered('bmToggleStates', 'csToggle', waitingForCharacterSheet)
-addStorageListener('bmToggleStates', 'csToggle', waitingForCharacterSheet)
-
 class CharacterSheet {
     private _interval: number;
     private _observerConfig = { attributes: true, childList: true, subtree: true };
     private _observerTarget = document;
     private _utils: Utils;
 
+    private _premiumTarget = "#character-tools-target";
+    private _normalTarget = "#character-sheet-target";
+    private _sufixTarget = " > .ct-character-sheet .ct-quick-info__ability";
+    private _compactTarget = "> .ct-character-sheet .ct-skills";
+    private _premiumPrefix = "ddbc";
+    private _normalPrefix = "ct";
+
     constructor(interval: number) {
         this._interval = interval;
-        this._utils = new Utils;
+        this._utils = new Utils();
     }
 
+    private waitForPageToLoad(): void {
+        const that = this;
+        const pageLoading = setInterval(() => {
+            const pageLoaded = that._utils.queryAll(that.getPageQueryString()).length >= 1;
+            if (pageLoaded) {
+                that.afterPageLoaded();
+                clearInterval(pageLoading);
+            }
+        }, this._interval);
+    }
+
+    private getPageQueryString(): string {
+        const queryString = this._premiumTarget + this._sufixTarget + "," +
+            this._normalTarget + this._sufixTarget + "," +
+            this._premiumTarget + this._compactTarget + "," +
+            this._normalTarget + this._compactTarget;
+
+        return queryString;
+    }
+
+    private afterPageLoaded(): void {
+        this.replaceUnits();
+        new MutationObserver(this.replaceUnits.bind(this)).observe(this._observerTarget, this._observerConfig);
+    }
+
+    private replaceUnits(): void {
+        this.convertDistanceNumber();
+    }
+
+    private createQuery(queryString: string): any {
+        return this._utils.createQuery(queryString, this._premiumPrefix, this._normalPrefix);
+    }
+
+    private checkIfNodeConverted(el: any, convertedClass?: string): boolean {
+        if (!convertedClass) {
+            convertedClass = this._utils.convertedClass;
+        }
+        return this._utils.checkIfNodeHasClass(el, convertedClass);
+    }
+
+    // ------- distance-number ------- \\
+    private convertDistanceNumber(): void {
+        const that = this;
+        const dn = "distance-number";
+        const dnNumber = '__number'
+        const dnLabel = "__label";
+
+        const distances = this._utils.queryAll(this.createQuery(dn));
+        distances.forEach((el: any) => {
+            const dnNumberSpan = that._utils.query(that.createQuery(dn + dnNumber), el);
+            const dnLabelSpan = that._utils.query(that.createQuery(dn + dnLabel), el);
+            that.replaceDistanceNumber(el, dnNumberSpan, dnLabelSpan);
+        });
+    }
+
+    private replaceDistanceNumber(el: any, dnNumber: any, dnLabel: any): void {
+        if (!this.checkIfNodeConverted(el)) {
+            if (!this._utils.checkIfNodeEmpty(dnNumber, true)) {
+                dnNumber.innerHTML = this._utils.convertDistanceFromFeetToMeters(dnNumber.innerHTML);
+            }
+            if (!this._utils.checkIfNodeEmpty(dnLabel)) {
+                this._utils.changeLabelFromImperialToMetric(dnLabel);
+            }
+            this._utils.markModified(el);
+        }
+    }
+    // ------- distance-number ------- \\
+
     public run(): void {
-        // this._utils.checkToggleInStorage("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
-        // this._utils.addStorageListener("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
+        this._utils.checkToggleInStorage("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
+        this._utils.addStorageListener("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
     }
 }
 

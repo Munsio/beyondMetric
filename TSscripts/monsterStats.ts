@@ -7,7 +7,7 @@ class MonsterStats {
 
     constructor(interval: number) {
         this._interval = interval;
-        this._utils = new Utils;
+        this._utils = new Utils();
     }
 
     private waitForPageToLoad(): void {
@@ -23,7 +23,7 @@ class MonsterStats {
 
     private afterPageLoaded(): void {
         this.replaceUnits();
-        new MutationObserver(this.convertUnitsInMonsterStats.bind(this)).observe(this._observerTarget, this._observerConfig);
+        new MutationObserver(this.replaceUnits.bind(this)).observe(this._observerTarget, this._observerConfig);
     }
 
     private replaceUnits(): void {
