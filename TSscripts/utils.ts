@@ -119,9 +119,9 @@ class Utils {
         return this.roundUp(distance * 1.6);
     }
 
-    public convertLongRangeDistanceFromFeetToMeters(distanceString: string): number {
+    public convertLongRangeDistanceFromFeetToMeters(distanceString: string): string {
         const distance = this.cleanCommas(distanceString.slice(1, distanceString.length - 1));
-        return this.convertDistanceFromFeetToMeters(distance);
+        return "(" + this.convertDistanceFromFeetToMeters(distance) + ")";
     }
 
     private convertDistanceFromFeetToMetersInText(text: string): string {
@@ -188,14 +188,13 @@ class Utils {
         const that = this;
         text = text.replace(/([0-9]+) (pounds)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
-        })
+        });
         text = text.replace(/([0-9]+) (pound)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
-        })
+        });
         text = text.replace(/([0-9]+) (lb.)/g, (_0, number: string, label: string) => {
             return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
-        })
-
+        });
         return text
     }
 
