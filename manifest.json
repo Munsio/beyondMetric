@@ -17,8 +17,8 @@
                 "*://www.dndbeyond.com/*characters/*"
             ],
             "js": [
-                "scripts/utils.js",
-                "scripts/characterSheet.js"
+                "scripts/Utils.js",
+                "scripts/CharacterSheet.js"
             ]
         },
         {
@@ -27,8 +27,8 @@
                 "*://www.dndbeyond.com/monsters/*"
             ],
             "js": [
-                "scripts/utils.js",
-                "scripts/monsterStats.js"
+                "scripts/Utils.js",
+                "scripts/MonsterStats.js"
             ]
         }
     ],
