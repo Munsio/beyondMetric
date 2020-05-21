@@ -7,7 +7,7 @@ class Utils {
         "mile": "kilometres",
         "miles": "kilometres"
     };
-    private _massToKilogramsMap: { [key: string]: string } = {
+    private _weightToKilogramsMap: { [key: string]: string } = {
         "lb.": "kg.",
         "pounds": "kilograms",
         "pound": "kilogram"
@@ -171,29 +171,29 @@ class Utils {
         return text;
     }
 
-    private convertMassStringToKilograms(lbString: string): string {
-        return this._massToKilogramsMap[lbString] || "lb.";
+    private convertWeightStringToKilograms(lbString: string): string {
+        return this._weightToKilogramsMap[lbString] || "lb.";
     }
 
     public changeLabelFromPoundsToKilograms(targetNode: any): void {
-        targetNode.innerHTML = this.convertMassStringToKilograms(targetNode.innerHTML);
+        targetNode.innerHTML = this.convertWeightStringToKilograms(targetNode.innerHTML);
     }
 
-    public convertMassFromPoundsToKilograms(massString: string): number {
-        const mass = this.convertStringToNumber(massString);
-        return mass / 2;
+    public convertWeightFromPoundsToKilograms(weightString: string): number {
+        const weight = this.convertStringToNumber(weightString);
+        return weight / 2;
     }
 
-    public convertMassFromPoundsToKilogramsInText(text: string): string {
+    public convertWeightFromPoundsToKilogramsInText(text: string): string {
         const that = this;
         text = text.replace(/([0-9]+) (pounds)/g, (_0, number: string, label: string) => {
-            return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
+            return that.convertWeightFromPoundsToKilograms(number) + " " + that.convertWeightStringToKilograms(label);
         });
         text = text.replace(/([0-9]+) (pound)/g, (_0, number: string, label: string) => {
-            return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
+            return that.convertWeightFromPoundsToKilograms(number) + " " + that.convertWeightStringToKilograms(label);
         });
         text = text.replace(/([0-9]+) (lb.)/g, (_0, number: string, label: string) => {
-            return that.convertMassFromPoundsToKilograms(number) + " " + that.convertMassStringToKilograms(label);
+            return that.convertWeightFromPoundsToKilograms(number) + " " + that.convertWeightStringToKilograms(label);
         });
         return text
     }

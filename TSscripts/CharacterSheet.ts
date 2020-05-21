@@ -130,7 +130,7 @@ class CharacterSheet {
                 if (this._globalWeight !== -1 && this.checkIfNodeConverted(el)) {
                     el.classList.remove(this._utils.convertedClass);
                 }
-                this._globalWeight = this._utils.convertMassFromPoundsToKilograms(globalWeight.innerHTML);
+                this._globalWeight = this._utils.convertWeightFromPoundsToKilograms(globalWeight.innerHTML);
             }
         }
     }
@@ -157,7 +157,7 @@ class CharacterSheet {
     private replaceWeightNumber(el: any, wnNumber: any, wnLabel: any): void {
         if (!this.checkIfNodeConverted(el)) {
             if (!this._utils.checkIfNodeEmpty(wnNumber, true)) {
-                wnNumber.innerHTML = this._utils.convertMassFromPoundsToKilograms(wnNumber.innerHTML);
+                wnNumber.innerHTML = this._utils.convertWeightFromPoundsToKilograms(wnNumber.innerHTML);
             }
             if (!this._utils.checkIfNodeEmpty(wnLabel)) {
                 this._utils.changeLabelFromPoundsToKilograms(wnLabel);
@@ -215,7 +215,7 @@ class CharacterSheet {
                 if (!this._utils.checkIfNodeEmpty(p)) {
                     const textNodes = this._utils.extractTextNodes(p);
                     textNodes.forEach((tn: any) => {
-                        tn.textContent = this._utils.convertMassFromPoundsToKilogramsInText(this._utils.convertDistanceFromImperialToMetricInText(tn.textContent));
+                        tn.textContent = this._utils.convertWeightFromPoundsToKilogramsInText(this._utils.convertDistanceFromImperialToMetricInText(tn.textContent));
                     });
                 }
             });

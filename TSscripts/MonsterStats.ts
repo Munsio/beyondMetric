@@ -41,7 +41,7 @@ class MonsterStats {
                 if (textNodes) {
                     textNodes.forEach((textNode: any) => {
                         if (!that._utils.checkIfTextNodeEmpty(textNode)) {
-                            textNode.textContent = that._utils.convertMassFromPoundsToKilogramsInText(that._utils.convertDistanceFromImperialToMetricInText(textNode.textContent));
+                            textNode.textContent = that._utils.convertWeightFromPoundsToKilogramsInText(that._utils.convertDistanceFromImperialToMetricInText(textNode.textContent));
                         }
                     });
                     that._utils.markModified(el);
