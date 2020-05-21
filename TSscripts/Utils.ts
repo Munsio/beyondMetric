@@ -100,7 +100,7 @@ class Utils {
         return text.replace(",", "");
     }
 
-    private convertStringToNumber(toConvert: string): number {
+    public convertStringToNumber(toConvert: string): number {
         const numberToReturn = Number(this.cleanCommas(toConvert));
         return isNaN(numberToReturn) ? -1 : numberToReturn;
     }

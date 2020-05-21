@@ -7,9 +7,10 @@ class CharacterSheet {
     private _premiumTarget = "#character-tools-target";
     private _normalTarget = "#character-sheet-target";
     private _sufixTarget = " > .ct-character-sheet .ct-quick-info__ability";
-    private _compactTarget = "> .ct-character-sheet .ct-skills";
+    private _compactTarget = "> .ct-character-sheet .ct-component-carousel";
     private _premiumPrefix = "ddbc";
     private _normalPrefix = "ct";
+    private _globalWeight = -1;
 
     constructor(interval: number) {
         this._interval = interval;
@@ -57,13 +58,14 @@ class CharacterSheet {
         this.convertRangeNumber();
         this.convertWeightNumber();
         this.convertText();
+        this.hideEasterEgg();
     }
 
     // ------- distance-number ------- \\
     private convertDistanceNumber(): void {
         const that = this;
         const dn = "distance-number";
-        const dnNumber = '__number'
+        const dnNumber = "__number";
         const dnLabel = "__label";
 
         const distances = this._utils.queryAll(this.createQuery(dn));
@@ -116,6 +118,23 @@ class CharacterSheet {
     // ------- combat-attack__range-value ------- \\
 
     // ------- weight-number ------- \\
+    private isGlobalWeight(parent: any): boolean {
+        const playerWeight = "ct-equipment-overview__weight-carried-amount";
+        return this._utils.checkIfNodeHasClass(parent, playerWeight);
+    }
+
+    private resetGlobalWeightIfChanged(el: any, globalWeight: any): void {
+        if (!this._utils.checkIfNodeEmpty(globalWeight)) {
+            const weight = this._utils.convertStringToNumber(globalWeight.innerHTML);
+            if (this._globalWeight !== weight) {
+                if (this._globalWeight !== -1 && this.checkIfNodeConverted(el)) {
+                    el.classList.remove(this._utils.convertedClass);
+                }
+                this._globalWeight = this._utils.convertMassFromPoundsToKilograms(globalWeight.innerHTML);
+            }
+        }
+    }
+
     private convertWeightNumber(): void {
         const that = this;
         const wn = "weight-number";
@@ -125,6 +144,11 @@ class CharacterSheet {
         const containers = this._utils.queryAll(this.createQuery(wn));
         containers.forEach((el: any) => {
             const wnNumberSpan = that._utils.query(that.createQuery(wn + wnNumber), el);
+
+            if (this.isGlobalWeight(el.parentNode)) {
+                this.resetGlobalWeightIfChanged(el, wnNumberSpan);
+            }
+
             const wnLabelSpan = that._utils.query(that.createQuery(wn + wnLabel), el);
             that.replaceWeightNumber(el, wnNumberSpan, wnLabelSpan);
         });
@@ -216,6 +240,45 @@ class CharacterSheet {
     // ------- senses__summary ------- \\
 
 
+    private hideEasterEgg(): void {
+        const that = this;
+        const sr = "spells-spell__range";
+        const origin = "-origin";
+
+        const containers = this._utils.queryAll(this.createQuery(sr));
+        containers.forEach((el: any) => {
+            if (that._utils.checkIfNodeHasClass(document.body, "party-time-enabled")) {
+
+                const label = that._utils.query(that.createQuery(sr + origin), el);
+                if (!that.checkIfNodeConverted(el) && !that._utils.checkIfNodeEmpty(label) && label.innerHTML === "Touch") {
+                    const br = document.createElement("BR");
+                    const joke = document.createElement("DIV");
+
+                    joke.innerHTML = "but in m.";
+                    joke.style.fontSize = "10px";
+                    joke.style.height = "auto";
+                    joke.style.padding = "0";
+
+                    br.classList.add("party-time-enabled-meters-joke");
+                    joke.classList.add("party-time-enabled-meters-joke");
+                    joke.classList.add("mm-nav-item__label");
+
+                    el.appendChild(br);
+                    el.appendChild(joke);
+
+                    that._utils.markModified(el);
+                }
+            } else {
+                if (that.checkIfNodeConverted(el)) {
+                    const containers = that._utils.queryAll(".party-time-enabled-meters-joke", el);
+                    containers.forEach((joke: any) => {
+                        joke.remove();
+                    });
+                    el.classList.remove(that._utils.convertedClass);
+                }
+            }
+        });
+    }
 
     public run(): void {
         this._utils.checkToggleInStorage("bmToggleStates", "csToggle", this.waitForPageToLoad.bind(this));
