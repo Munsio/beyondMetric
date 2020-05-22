@@ -116,7 +116,7 @@ class Utils {
 
     private convertDistanceFromMilesToKilometers(distanceString: string): number {
         const distance = this.convertStringToNumber(distanceString);
-        return this.roundUp(distance * 1.6);
+        return this.roundUp(distance * 1.5);
     }
 
     public convertLongRangeDistanceFromFeetToMeters(distanceString: string): string {
