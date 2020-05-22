@@ -148,6 +148,10 @@ class Utils {
         text = text.replace(/(range )([0-9]+)\/([0-9]+)/g, (_0, words: string, smallRange: string, bigRange: string) => {
             return words + that.convertDistanceFromFeetToMeters(smallRange) + "/" + that.convertDistanceFromFeetToMeters(bigRange);
         });
+        text = text.replace(/([0-9]+) extra (foot|feet)/g, (_0, number: string, label: string) => {
+            // TODO Replace this to be generic
+            return that.convertDistanceFromFeetToMeters(number) + " extra " + that.convertDistanceStringToMetric("feet");
+        });
         return text;
     }
 
@@ -172,7 +176,7 @@ class Utils {
     }
 
     private convertWeightStringToKilograms(lbString: string): string {
-        return this._weightToKilogramsMap[lbString] || "lb.";
+        return this._weightToKilogramsMap[lbString] || "kg.";
     }
 
     public changeLabelFromPoundsToKilograms(targetNode: any): void {
