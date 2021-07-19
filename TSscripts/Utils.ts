@@ -18,7 +18,7 @@ class Utils {
     }
 
     public checkToggleInStorage(storageLocation: string, item: string, callback: Function): void {
-        chrome.storage.sync.get(storageLocation, (result: any) => {
+        browser.storage.sync.get(storageLocation).then((result: any) => {
             const toggleStates = result.bmToggleStates;
             if (toggleStates && toggleStates[item] && callback) {
                 callback();
@@ -27,7 +27,7 @@ class Utils {
     }
 
     public addStorageListener(storageLocation: string, item: string, callback: Function): void {
-        chrome.storage.onChanged.addListener((changes: any) => {
+        browser.storage.onChanged.addListener((changes: any) => {
             for (const key in changes) {
                 if (changes.hasOwnProperty(key) && key === storageLocation) {
                     const oldValue = changes[key].oldValue;

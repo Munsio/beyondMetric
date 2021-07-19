@@ -17,7 +17,7 @@ class Popup {
     private loadToggleValuesFromStorage(): void {
         const that = this;
 
-        chrome.storage.sync.get("bmToggleStates", (result) => {
+        browser.storage.sync.get("bmToggleStates").then((result) => {
             const toggleStates = result.bmToggleStates;
             if (toggleStates) {
                 that._csToggle.checked = toggleStates.csToggle ? true : false;
@@ -32,7 +32,7 @@ class Popup {
             "msToggle": this._msToggle.checked
         };
 
-        chrome.storage.sync.set({ "bmToggleStates": bmToggleStates });
+        browser.storage.sync.set({ "bmToggleStates": bmToggleStates });
     }
 
     public run(): void {
